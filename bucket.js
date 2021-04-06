@@ -7,6 +7,7 @@ const cmdOptions = [
 const options = cmdArgs(cmdOptions)
 
 const Actor = (options.debug) ?  require('../cllibsecureamqp').Actor : require('secureamqp').Actor
+const Data = (options.debug) ?  require('../cllibsecureamqp').Data : require('secureamqp').Data
 
 options.config = options.config || "./config"
 const config = require(options.config)
@@ -23,6 +24,11 @@ const manifest = {
 async function main() {
 	const bucket = new Actor(config)
 	await bucket.boot()
+	const myData = new Data('myData', Array, bucket)
+
+	console.log("Curator: ", myData.curator.id())
+	console.log("manifest: ", myData.manifest())
+
 	bucket.exposeAsset('myData', manifest, data, function(req) {
 		// return true or flase to allow to serve data
 		return true
